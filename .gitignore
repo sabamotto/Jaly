@@ -1,0 +1,4 @@
+# It exclude environment files and likely patterns
+# If you will specify these, create an user '.gitignore'
+
+/.bundle
