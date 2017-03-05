@@ -28,6 +28,7 @@ Interactive mode (incomplete):
     bundle exec ruby jaly.rb
 
 ## Supported lyrics sites
+- uta-net.com
 - kasi-time.com
 
 ## Notes
