@@ -9,8 +9,6 @@ module Jaly
         '作詞：' => :songwriter,
         '作曲：' => :composer,
         '編曲：' => :arranger,
-        # 'カテゴリ' => :genre,
-        # '読み' => :spelling,
       }
 
       def parse
@@ -38,15 +36,6 @@ module Jaly
         doc.css('text').each do |line|
           @lyrics << line.inner_text.strip
         end
-        # if elem.text.strip.size == 0
-        #   code = doc.at_css('body .center > script')
-        #     .text.match(/var\s+lyrics\s*=\s*'([^']*)';/)
-        #   if code and code[1].size > 0
-        #     elem = Nokogiri::HTML.parse("<div id=lyrics>#{code[1]}</div>").at_css('#lyrics')
-        #   else
-        #     elem = nil
-        #   end
-        # end
 
         @lyrics
       end
