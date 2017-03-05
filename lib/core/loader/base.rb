@@ -10,43 +10,40 @@ module Jaly
       end
 
       def lyrics
-        if @lyrics.empty?
-          charset = nil
-          html = open(@lyrics.uri) do |f|
-            charset = f.charset
-            f.read
-          end
-
-          self.class.parse(@lyrics, html, charset: charset)
-        end
-
+        parse if @lyrics.empty?
         @lyrics
       end
 
-      def self.parse(lyrics, object, opts=nil)
+      # implementation method
+      def parse
         raise 'loader class parser is not implemented'
       end
 
-      @@uri_patterns = -> (uri) {
-        raise 'loader class URI matcher is not implemented'
-      }
+      @uri_patterns = nil
       def self.generate_from_uri(uri)
         result = nil
-        if @@uri_patterns.is_a?(Proc)
-          if @@uri_patterns.call
+        case @uri_patterns
+        when Proc
+          if @uri_patterns.call
             result = self.new(uri)
           end
-        else
-          @@uri_patterns.each do |pattern|
+        when Array
+          @uri_patterns.each do |pattern|
             if uri =~ pattern
               result = self.new(uri)
               break
             end
           end
+        else
+          raise 'loader class URI matcher is not implemented'
         end
         result
       end
 
+      @@name = 'unknown'
+      def self.provider
+        @@name
+      end
 
       protected
 
@@ -54,8 +51,15 @@ module Jaly
         Lyrics.new(self, base_uri)
       end
 
-      def self.simple_parse_html_element(lyrics, lyrics_elem)
-        lyrics.clear
+      def document(uri, charset=nil)
+        html = open(uri) do |f|
+          charset ||= f.charset
+          f.read
+        end
+        Nokogiri::HTML.parse(html, nil, charset)
+      end
+
+      def simple_parse_html_element(lyrics_elem)
         line = {}
         lyrics_elem.children.each do |node|
           if node.text?
@@ -65,33 +69,33 @@ module Jaly
               line[:text] = node.content.strip
             end
           elsif node.elem? and node.name.downcase == 'br'
-            lyrics << line
+            @lyrics << line
             line = {}
           elsif block_given?
             yield line, node
           end
         end
         if line[:text] and line[:text].size > 0
-          lyrics << line
+          @lyrics << line
         end
-        lyrics
+        @lyrics
       end
 
-      @@multi_supported = nil
+      @multi_supported = nil
       def self.uri_matching(obj)
-        unless @@multi_supported
-          @@multi_supported = MultiSupport.add_loader(self)
+        unless @multi_supported
+          @multi_supported = MultiSupport.add_loader(self)
         end
 
         case obj
         when Proc
-          @@uri_patterns = obj
+          @uri_patterns = obj
         when Regexp
-          @@uri_patterns = [] if @@uri_patterns.is_a? Proc
-          @@uri_patterns << obj
+          @uri_patterns ||= []
+          @uri_patterns << obj
         when String
-          @@uri_patterns = [] if @@uri_patterns.is_a? Proc
-          @@uri_patterns << Regexp.new(
+          @uri_patterns ||= []
+          @uri_patterns << Regexp.new(
             "\\Ahttps?:\/\/#{obj.gsub(/\.|\//, '\\0')}"
           )
         else
@@ -99,10 +103,6 @@ module Jaly
         end
       end
 
-      @@name = 'unknown'
-      def self.provider
-        @@name
-      end
       def self.set_provider(name)
         @@name = name
       end
