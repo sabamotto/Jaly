@@ -1,38 +1,43 @@
 # Jaly
+
 Japanese Lyrics Reader.
+It is the integration of lyrics services and keyword search engines.
 
-## How to use
-Install:
+## Installation
 
-    bundle install
+Install it yourself as:
 
-Update:
+    $ gem install jaly
 
-    git pull
-    bundle install
+## Usage
 
-Read from URI:
+Read the lyrics from URI:
 
-    bundle exec ruby jaly.rb "YOUR-URI"
-    # or
-    bundle exec ruby jaly.rb -u "YOUR-URI"
+    $ jaly "http://YOUR-URI"
 
-Keyword Search (incomplete):
+Or specify URI mode option:
 
-    bundle exec ruby jaly.rb "KEYWORD"
-    # or
-    bundle exec ruby jaly.rb -s "KEYWORD"
+    $ jaly -u "http://YOUR-URI"
 
-Interactive mode (incomplete):
+[WIP] Search lyrics for your keywords:
 
-    bundle exec ruby jaly.rb
+    $ jaly "KEYWORDS"
 
-## Supported lyrics sites
-- uta-net.com
-- kasi-time.com
+[WIP] Or specify Search mode option:
 
-## Notes
-You must use it privately.
+    $ jaly -s "KEYWORDS"
 
-## Author
-@sabamotto
+[WIP] Execute interactive mode:
+
+    $ jaly
+
+## Development
+
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/sabamotto/jaly.
+

@@ -1,5 +1,7 @@
-require 'optparse'
-require './lib/jaly_libs'
+#!/usr/bin/env ruby
+
+require "jaly"
+require "optparse"
 
 cmd_opts = {}
 OptionParser.new do |op|
@@ -31,7 +33,7 @@ case cmd_opts[:mode]
 when :uri
   if lyrics = Jaly.load(cmd_opts[:uri])&.lyrics
     puts "#{lyrics.title} - #{lyrics.meta[:artist]}"
-    puts lyrics.meta
+    puts lyrics.info
     puts '-'*32
     puts lyrics.text
   else

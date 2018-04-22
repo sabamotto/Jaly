@@ -22,7 +22,6 @@ module Jaly
         # parse meta data
         meta_key = nil
         view.at_css('.kashi_artist').children.each do |node|
-          puts node.inner_text
           if node.text?
             meta_key = @@meta_relation[node.text.strip]
           elsif node.elem? and meta_key and node.name.downcase =~ /h\d/
@@ -30,11 +29,16 @@ module Jaly
           end
         end
 
-        # parse lyrics from SVG
-        k_uri = view.at_css('#ipad_kashi img')&.attribute('src')
-        doc = document("http://www.uta-net.com/#{k_uri}") if k_uri
-        doc.css('text').each do |line|
-          @lyrics << line.inner_text.strip
+        if elem = view.at_css('#kashi_area')
+          # parse lyrics field
+          simple_parse_html_element elem
+
+        elsif elem = view.at_css('#ipad_kashi img')
+          # parse lyrics from SVG
+          doc = document("http://www.uta-net.com/#{elem.attribute('src')}")
+          doc.css('text').each do |line|
+            @lyrics << line.inner_text.strip
+          end
         end
 
         @lyrics

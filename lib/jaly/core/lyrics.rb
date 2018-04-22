@@ -7,6 +7,22 @@ module Jaly
     attr_reader :uri
     attr_reader :meta
 
+    @@meta_names = {
+      title: '曲名',
+      artist: 'アーティスト',
+      songwriter: '作詞',
+      composer: '作曲',
+      arranger: '編曲',
+      genre: 'ジャンル',
+      spelling: '曲名（かな）',
+    }
+
+    @@default_info_order = [
+      :songwriter,
+      :composer,
+      :arranger,
+    ]
+
     def initialize(loader, uri)
       @loader = loader
       @uri = uri
@@ -40,6 +56,16 @@ module Jaly
       @data.each do |line|
         result << (line.is_a?(String) ? line : line[:text] || '')
         result << "\n"
+      end
+      result
+    end
+
+    def info(line_prefix='', order=@@default_info_order)
+      result = ''
+      order.each do |k|
+        if (key_name = @@meta_names[k]) and (v = @meta[k])
+          result << "#{line_prefix}#{key_name} : #{v}\n"
+        end
       end
       result
     end
